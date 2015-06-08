@@ -196,14 +196,6 @@ function git_prompt_config()
   get_theme
   source "$__GIT_PROMPT_THEME_FILE"
 
-  if [ $GIT_PROMPT_LAST_COMMAND_STATE = 0 ]; then
-    LAST_COMMAND_INDICATOR="$GIT_PROMPT_COMMAND_OK";
-  else
-    LAST_COMMAND_INDICATOR="$GIT_PROMPT_COMMAND_FAIL";
-  fi
-
-  # replace _LAST_COMMAND_STATE_ token with the actual state
-  LAST_COMMAND_INDICATOR="${LAST_COMMAND_INDICATOR/_LAST_COMMAND_STATE_/${GIT_PROMPT_LAST_COMMAND_STATE}}"
 
   # Do this only once to define PROMPT_START and PROMPT_END
 
@@ -256,7 +248,7 @@ function git_prompt_config()
       ps="${ps}${GIT_PROMPT_VIRTUALENV/_VIRTUALENV_/${VENV}}"
     fi
     ps="$ps$PROMPT_START$($prompt_callback)$PROMPT_END"
-    EMPTY_PROMPT="${ps/_LAST_COMMAND_INDICATOR_/${LAST_COMMAND_INDICATOR}}"
+    EMPTY_PROMPT="${ps}"
   fi
 
   # fetch remote revisions every other $GIT_PROMPT_FETCH_TIMEOUT (default 5) minutes
@@ -270,9 +262,6 @@ function git_prompt_config()
   fi
 }
 
-function setLastCommandState() {
-  GIT_PROMPT_LAST_COMMAND_STATE=$?
-}
 
 function setGitPrompt() {
   local EMPTY_PROMPT
@@ -286,7 +275,7 @@ function setGitPrompt() {
     return
   fi
 
-  local FETCH_REMOTE_STATUS=1
+  local FETCH_REMOTE_STATUS=0
   if [[ "$GIT_PROMPT_FETCH_REMOTE_STATUS" = 0 ]]; then
     FETCH_REMOTE_STATUS=0
   fi
@@ -302,9 +291,9 @@ function setGitPrompt() {
     return
   fi
 
-  if [[ "$FETCH_REMOTE_STATUS" = 1 ]]; then
-    checkUpstream
-  fi
+  #if [[ "$FETCH_REMOTE_STATUS" = 1 ]]; then
+  #  checkUpstream
+  #fi
 
   updatePrompt
 }
@@ -335,7 +324,6 @@ function replaceSymbols()
 }
 
 function updatePrompt() {
-  local LAST_COMMAND_INDICATOR
   local PROMPT_LEADING_SPACE
   local PROMPT_START
   local PROMPT_END
@@ -417,7 +405,7 @@ function updatePrompt() {
     NEW_PROMPT="$EMPTY_PROMPT"
   fi
 
-  PS1="${NEW_PROMPT/_LAST_COMMAND_INDICATOR_/${LAST_COMMAND_INDICATOR}}"
+  PS1="${NEW_PROMPT}"
 }
 
 function prompt_callback_default {
@@ -453,16 +441,6 @@ function gp_install_prompt {
     esac
   fi
 
-  local setLastCommandStateEntry="setLastCommandState"
-  case ";$PROMPT_COMMAND;" in
-    *";$setLastCommandStateEntry;"*)
-      # echo "PROMPT_COMMAND already contains: $setLastCommandStateEntry"
-      :;;
-    *)
-      PROMPT_COMMAND="$setLastCommandStateEntry;$PROMPT_COMMAND"
-      # echo "PROMPT_COMMAND does not contain: $setLastCommandStateEntry"
-      ;;
-  esac
 
   git_prompt_dir
   source "$__GIT_PROMPT_DIR/git-prompt-help.sh"
