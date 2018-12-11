@@ -1,3 +1,11 @@
+# Quick install
+
+```bash
+git clone https://github.com/dlozinski/bash-git-prompt.git ~/.bash-git-prompt
+~/.bash-git-prompt/install.sh # this installs also git aliases
+```
+
+
 # Informative git prompt for bash and fish
 
 This prompt is a port of the "Informative git prompt for zsh" which you can
