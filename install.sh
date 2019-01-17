@@ -1,6 +1,8 @@
 #!/bin/bash -x
 
 echo '
+alias gitka="gitk --all"
+
 # Git prompt config
 GIT_PROMPT_ONLY_IN_REPO=1
 source ~/.bash-git-prompt/gitprompt.sh' >> ~/.bashrc
